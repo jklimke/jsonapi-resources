@@ -345,6 +345,12 @@ module JSONAPI
             relation_resources = [real_res.public_send(rel_name)].flatten(1).compact
             fragments = relation_resources.map{|r| [r.id, r]}.to_h
           end
+
+          # if there are fragments the relationship should be stored so we initialize the hash with the corresponding key
+          if fragments.present? && !h.has_key?(key)
+            h[key] = { data: to_many ? [] : nil }
+          end
+          
           fragments.each do |id, f|
             add_resource(f, ia)
 
