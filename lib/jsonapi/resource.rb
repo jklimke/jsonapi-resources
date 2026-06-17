@@ -541,7 +541,9 @@ module JSONAPI
         check_reserved_attribute_name(attr)
 
         if (attr == :id) && (options[:format].nil?)
-          ActiveSupport::Deprecation.warn('Id without format is no longer supported. Please remove ids from attributes, or specify a format.')
+          # ActiveSupport::Deprecation's class-level #warn was made private in
+          # Rails 8.1; use an instance deprecator, which works on Rails 5-8.
+          ActiveSupport::Deprecation.new.warn('Id without format is no longer supported. Please remove ids from attributes, or specify a format.')
         end
 
         check_duplicate_attribute_name(attr) if options[:format].nil?

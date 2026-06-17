@@ -346,8 +346,13 @@ module JSONAPI
             fragments = relation_resources.map{|r| [r.id, r]}.to_h
           end
 
-          # if there are fragments the relationship should be stored so we initialize the hash with the corresponding key
-          if fragments.present? && !h.has_key?(key)
+          # If there are fragments the relationship linkage should be stored, but
+          # only when the sparse fieldset permits this relationship to appear in
+          # the resource's `relationships` (the non-cached path filters the same
+          # way via supplying_relationship_fields). The fragments are still added
+          # to `included` above regardless, so `include` directives keep working.
+          if fragments.present? && !h.has_key?(key) &&
+             supplying_relationship_fields(source.resource_klass).include?(rel_name)
             h[key] = { data: to_many ? [] : nil }
           end
           
