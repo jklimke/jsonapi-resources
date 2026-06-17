@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ 'master', 'release-0-8', 'release-0-9', 'release-0-10' ]
+    branches: [ 'master', 'release-0-8', 'release-0-9', 'release-0-10', 'rails-8.1-compat' ]
   pull_request:
     branches: ['**']
 
@@ -13,32 +13,30 @@ jobs:
       fail-fast: false
       matrix:
         ruby:
-          - 2.6.6
-          - 2.7.2
+          - '3.2'
+          - '3.3'
+          - '3.4'
         rails:
-          - 6.1.1
-          - 6.0.3.4
-          - 5.2.4.4
-          - 5.1.7
-          - 5.0.7.2
-          - 4.2.11
+          - '7.1'
+          - '7.2'
+          - '8.0'
+          - '8.1'
         exclude:
-          - ruby: 2.7.2
-            rails: 5.0.7.2
-          - ruby: 2.7.2
-            rails: 4.2.11
-          - ruby: 2.6.6
-            rails: 4.2.11
+          # Pair the older Rails lines with the Ruby versions they target; the
+          # sqlite3 1.4.x line used for Rails < 8 does not build on Ruby 3.4.
+          - ruby: '3.4'
+            rails: '7.1'
+          - ruby: '3.4'
+            rails: '7.2'
     env:
       RAILS_VERSION: ${{ matrix.rails }}
     name: Ruby ${{ matrix.ruby }} Rails ${{ matrix.rails }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-      - name: Install dependencies
-        run: bundle install --jobs 4 --retry 3
+          bundler-cache: true
       - name: Run tests
         run: bundle exec rake test
