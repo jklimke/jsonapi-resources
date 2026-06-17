@@ -16,6 +16,7 @@ jobs:
           - '3.2'
           - '3.3'
           - '3.4'
+          - '4.0'
         rails:
           - '7.1'
           - '7.2'
@@ -23,10 +24,14 @@ jobs:
           - '8.1'
         exclude:
           # Pair the older Rails lines with the Ruby versions they target; the
-          # sqlite3 1.4.x line used for Rails < 8 does not build on Ruby 3.4.
+          # sqlite3 1.4.x line used for Rails < 8 does not build on Ruby 3.4+.
           - ruby: '3.4'
             rails: '7.1'
           - ruby: '3.4'
+            rails: '7.2'
+          - ruby: '4.0'
+            rails: '7.1'
+          - ruby: '4.0'
             rails: '7.2'
     env:
       RAILS_VERSION: ${{ matrix.rails }}
